@@ -28,6 +28,9 @@
 html {
   background: var(--charcoal);
   color-scheme: dark;
+  /* Stop iOS inflating type in landscape / with Display Zoom */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {

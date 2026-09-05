@@ -24,7 +24,7 @@ export function Hero() {
 
       <div className="relative z-10 px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
         <div className="max-w-2xl">
-          <h1 className="text-[2.1rem] font-extrabold uppercase leading-[0.95] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
+          <h1 className="text-[7vw] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
             Same subject.
             <br />
             Different
@@ -35,7 +35,7 @@ export function Hero() {
           <span className="mt-6 block h-[3px] w-16 bg-accent" aria-hidden="true" />
 
           <span
-            className="signature mt-7 block w-44 text-chalk sm:w-56"
+            className="signature mt-6 block w-36 text-chalk sm:w-56"
             role="img"
             aria-label="Logan Kiser's signature"
           />
