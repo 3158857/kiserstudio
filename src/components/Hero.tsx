@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function Hero() {
   return (
-    <section className="relative isolate flex min-h-[68vh] flex-col justify-end overflow-hidden lg:min-h-[64vh] lg:justify-start">
+    <section className="relative isolate flex min-h-[68vh] flex-col justify-between overflow-hidden px-6 py-12 sm:px-10 lg:min-h-[64vh] lg:justify-start lg:px-14 lg:py-16">
       {/* Artwork bleeds off the right edge, fading into the charcoal ground */}
       <div className="absolute inset-y-0 right-0 w-full lg:w-[64%]">
         <Image
@@ -14,32 +14,42 @@ export function Hero() {
           className="object-cover"
           style={{ objectPosition: "50% 35%" }}
         />
-        {/* Vertical scrim on narrow screens so the artwork isn't dimmed from
-            the left; horizontal on desktop where the copy sits beside it. */}
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent lg:bg-gradient-to-r lg:from-charcoal lg:via-charcoal/55 lg:to-transparent"
-          aria-hidden="true"
-        />
       </div>
 
-      <div className="relative z-10 px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
-        <div className="max-w-2xl">
-          <h1 className="text-[7vw] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
-            Same subject.
-            <br />
-            Different
-            <br />
-            perspective.
-          </h1>
+      {/* Mobile: dark at both ends for the copy, clear through the middle so
+          the cat's face reads. Desktop: horizontal, copy sits beside it. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 lg:hidden"
+        style={{
+          backgroundImage:
+            "linear-gradient(to bottom, rgba(17,17,17,0.92) 0%, rgba(17,17,17,0.10) 34%, rgba(17,17,17,0.10) 58%, rgba(17,17,17,0.90) 100%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 hidden bg-gradient-to-r from-charcoal via-charcoal/55 to-transparent lg:block"
+      />
 
-          <span className="mt-6 block h-[3px] w-16 bg-accent" aria-hidden="true" />
+      <div className="relative z-10 max-w-2xl">
+        <h1 className="text-[7vw] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
+          Same subject.
+          <br />
+          Different
+          <br />
+          perspective.
+        </h1>
+      </div>
 
-          <span
-            className="signature mt-6 block w-36 text-chalk sm:w-56"
-            role="img"
-            aria-label="Logan Kiser's signature"
-          />
-        </div>
+      {/* Sits at the foot of the hero on mobile; tucks under the headline on
+          desktop, where the copy is a single block beside the artwork. */}
+      <div className="relative z-10 max-w-2xl lg:mt-7">
+        <span className="block h-[3px] w-16 bg-accent" aria-hidden="true" />
+        <span
+          className="signature mt-6 block w-36 text-chalk sm:w-56"
+          role="img"
+          aria-label="Logan Kiser's signature"
+        />
       </div>
     </section>
   );
