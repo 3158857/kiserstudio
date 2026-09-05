@@ -14,8 +14,10 @@ export function Hero() {
           className="object-cover"
           style={{ objectPosition: "50% 35%" }}
         />
+        {/* Vertical scrim on narrow screens so the artwork isn't dimmed from
+            the left; horizontal on desktop where the copy sits beside it. */}
         <div
-          className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/85 to-charcoal/25 lg:via-charcoal/55 lg:to-transparent"
+          className="absolute inset-0 bg-gradient-to-b from-charcoal via-charcoal/55 to-charcoal/5 lg:bg-gradient-to-r lg:from-charcoal lg:via-charcoal/55 lg:to-transparent"
           aria-hidden="true"
         />
       </div>

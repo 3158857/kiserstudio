@@ -1,3 +1,5 @@
+import { Socials } from "./Socials";
+
 export function About() {
   return (
     <section id="about" className="grain relative bg-charcoal px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
@@ -23,6 +25,8 @@ export function About() {
         >
           logankiser08@gmail.com
         </a>
+
+        <Socials className="mt-10" />
       </div>
     </section>
   );

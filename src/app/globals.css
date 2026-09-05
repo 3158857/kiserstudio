@@ -5,7 +5,7 @@
   --charcoal: #111111;
   --graphite: #4a4a4a;
   --paper: #d6d1cb;
-  --chalk: #f4f4f2; /* board reads #F4F422 — treated as a typo, see notes */
+  --chalk: #f4f4f2; /* board prints #F4F422 (yellow); confirmed a typo — white is correct */
   --accent: #c7432e;
 
   --rule-dark: rgba(244, 244, 242, 0.16);
