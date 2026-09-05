@@ -14,22 +14,24 @@ export function Hero() {
           className="object-cover"
           style={{ objectPosition: "50% 35%" }}
         />
-      </div>
 
-      {/* Mobile: dark at both ends for the copy, clear through the middle so
-          the cat's face reads. Desktop: horizontal, copy sits beside it. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 lg:hidden"
-        style={{
-          backgroundImage:
-            "linear-gradient(to bottom, rgba(17,17,17,0.92) 0%, rgba(17,17,17,0.10) 34%, rgba(17,17,17,0.10) 58%, rgba(17,17,17,0.90) 100%)",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 hidden bg-gradient-to-r from-charcoal via-charcoal/55 to-transparent lg:block"
-      />
+        {/* Both scrims live inside the image box, so on desktop the gradient
+            starts fully opaque at the artwork's own left edge and hides the
+            seam. Anchored to the section instead, it lightens before it gets
+            there and the edge shows as a hard line. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 lg:hidden"
+          style={{
+            backgroundImage:
+              "linear-gradient(to bottom, rgba(17,17,17,0.92) 0%, rgba(17,17,17,0.10) 34%, rgba(17,17,17,0.10) 58%, rgba(17,17,17,0.90) 100%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 hidden bg-gradient-to-r from-charcoal via-charcoal/55 to-transparent lg:block"
+        />
+      </div>
 
       <div className="relative z-10 max-w-2xl">
         <h1 className="text-[7vw] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
