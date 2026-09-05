@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Palette per the brand board */
+  --charcoal: #111111;
+  --graphite: #4a4a4a;
+  --paper: #d6d1cb;
+  --chalk: #f4f4f2; /* board reads #F4F422 — treated as a typo, see notes */
+  --accent: #c7432e;
+
+  --rule-dark: rgba(244, 244, 242, 0.16);
+  --rule-light: rgba(17, 17, 17, 0.18);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-charcoal: var(--charcoal);
+  --color-graphite: var(--graphite);
+  --color-paper: var(--paper);
+  --color-chalk: var(--chalk);
+  --color-accent: var(--accent);
+  --color-rule-dark: var(--rule-dark);
+  --color-rule-light: var(--rule-light);
+
+  --font-sans: var(--ff-primary);
+  --font-secondary: var(--ff-secondary);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--charcoal);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  background: var(--charcoal);
+  color: var(--chalk);
+  font-family: var(--ff-primary), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.tracked {
+  letter-spacing: 0.24em;
+}
+.tracked-wide {
+  letter-spacing: 0.4em;
+}
+
+/* Logan's signature ships as an alpha mask, so it can be tinted to any
+   colour and sit on either the charcoal or the paper panels. */
+.signature {
+  -webkit-mask-image: url("/artwork/signature.png");
+  mask-image: url("/artwork/signature.png");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: currentColor;
+  aspect-ratio: 1784 / 736;
+}
+
+/* Torn-paper bottom edge for the header bar. Procedural rather than a
+   bitmap, so it stretches to any viewport width and costs a few hundred
+   bytes. Applied to a chalk-filled strip hanging below the header. */
+.torn-edge {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='64' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-50%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.05' numOctaves='3' seed='21' result='big'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='big' scale='38' xChannelSelector='R' yChannelSelector='G' result='d1'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05 0.45' numOctaves='3' seed='7' result='fine'/%3E%3CfeDisplacementMap in='d1' in2='fine' scale='10' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1440' height='26' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='64' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-50%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.05' numOctaves='3' seed='21' result='big'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='big' scale='38' xChannelSelector='R' yChannelSelector='G' result='d1'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05 0.45' numOctaves='3' seed='7' result='fine'/%3E%3CfeDisplacementMap in='d1' in2='fine' scale='10' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1440' height='26' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
