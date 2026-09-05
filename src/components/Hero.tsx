@@ -1,114 +1,105 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
-import { ArtPlaceholder } from "./ArtPlaceholder";
-import { BrushStroke } from "./BrushStroke";
 
 const SLIDES = [
-  { caption: "Hero artwork 01" },
-  { caption: "Hero artwork 02" },
-  { caption: "Hero artwork 03" },
+  { src: "/artwork/cat.jpg", alt: "Charcoal drawing of a cat looking upward", position: "50% 35%" },
+  { src: "/artwork/fox.jpg", alt: "Charcoal drawing of a fox in profile", position: "55% 40%" },
+  { src: "/artwork/spartan.jpg", alt: "Charcoal drawing of a helmeted Roman soldier", position: "50% 35%" },
 ];
 
 export function Hero() {
   const [index, setIndex] = useState(0);
-  const move = (delta: number) =>
-    setIndex((i) => (i + delta + SLIDES.length) % SLIDES.length);
+  const move = (d: number) => setIndex((i) => (i + d + SLIDES.length) % SLIDES.length);
+  const slide = SLIDES[index];
 
   return (
-    <section className="relative grid items-center gap-12 px-6 pb-20 pt-8 sm:px-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.12fr)_auto] lg:gap-10 lg:px-14 lg:pb-28">
-      {/* Copy */}
-      <div className="relative z-10 max-w-xl">
-        <p className="tracked text-[0.68rem] uppercase leading-[2.1] text-ink-muted">
-          Same subject.
-          <br />
-          Different
-          <br />
-          Perspective.
-        </p>
+    <section className="relative isolate min-h-[78vh] overflow-hidden lg:min-h-[86vh]">
+      {/* Artwork bleeds off the right edge, fading into the charcoal ground */}
+      <div className="absolute inset-y-0 right-0 w-full lg:w-[64%]">
+        <Image
+          key={slide.src}
+          src={slide.src}
+          alt={slide.alt}
+          fill
+          priority
+          sizes="(max-width: 1024px) 100vw, 64vw"
+          className="object-cover"
+          style={{ objectPosition: slide.position }}
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/85 to-charcoal/25 lg:via-charcoal/55 lg:to-transparent"
+          aria-hidden="true"
+        />
+        {/* Keeps the right rail legible where it crosses the artwork */}
+        <div
+          className="absolute inset-y-0 right-0 w-[26%] bg-gradient-to-l from-charcoal/85 to-transparent"
+          aria-hidden="true"
+        />
+      </div>
 
-        <span className="mt-6 block h-[3px] w-16 bg-accent" aria-hidden="true" />
+      <div className="relative z-10 grid items-center gap-10 px-6 py-16 sm:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:px-14 lg:py-24">
+        <div className="max-w-2xl">
+          <h1 className="text-[2.6rem] font-extrabold uppercase leading-[0.95] tracking-[-0.01em] sm:text-6xl lg:text-[4.4rem]">
+            Art builds a<br />
+            brighter
+            <br />
+            perspective.
+          </h1>
 
-        <h1 className="mt-5">
-          <span className="textured-type block font-display text-[19vw] leading-[0.82] tracking-[0.02em] sm:text-[13vw] lg:text-[8.6rem]">
-            KISER
-          </span>
-          <span className="tracked-wide mt-3 block text-[1.05rem] sm:text-[1.5rem] lg:text-[1.9rem]">
-            STUDIO
-          </span>
-        </h1>
+          <span className="mt-7 block h-[4px] w-20 bg-accent" aria-hidden="true" />
 
-        <p className="relative mt-2 font-script text-5xl leading-none text-ink sm:text-6xl">
-          Logan
-          <span
-            className="absolute -bottom-1 left-2 h-px w-40 bg-ink/70 sm:w-56"
-            aria-hidden="true"
-          />
-        </p>
+          <p className="font-secondary mt-7 text-base leading-relaxed opacity-75 sm:text-lg">
+            Realistic artwork.
+            <br />
+            Expansive possibilities.
+          </p>
 
-        <p className="tracked mt-10 text-[0.66rem] uppercase text-ink-muted">
-          Art builds a brighter perspective.
-        </p>
-
-        <div className="mt-8 flex flex-wrap items-center gap-8">
           <a
             href="#work"
-            className="group inline-flex items-center gap-4 border border-rule px-7 py-4 transition-colors hover:border-ink"
+            className="group mt-10 inline-flex items-center gap-4 border border-rule-dark px-8 py-4 transition-colors hover:border-chalk"
           >
             <span className="tracked text-[0.66rem] uppercase">View Work</span>
             <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
               &#8594;
             </span>
           </a>
-          <a
-            href="#about"
-            className="tracked border-b border-rule pb-1 text-[0.66rem] uppercase text-ink-muted transition-colors hover:border-ink hover:text-ink"
-          >
-            Learn More
-          </a>
         </div>
-      </div>
 
-      {/* Artwork */}
-      <div className="relative">
-        <BrushStroke className="pointer-events-none absolute -top-[10%] left-[-26%] z-0 h-[124%] w-[74%] opacity-95" />
-        <ArtPlaceholder
-          label={SLIDES[index].caption}
-          ratio="aspect-[4/5] sm:aspect-[5/5]"
-          className="relative z-10"
-        />
-      </div>
-
-      {/* Right rail */}
-      <div className="flex items-center gap-6 lg:flex-col lg:items-end lg:gap-10">
-        <span className="hidden h-28 w-px bg-rule lg:block" aria-hidden="true" />
-        <p className="tracked text-[0.62rem] uppercase leading-[2.2] text-ink-muted lg:text-right">
-          Draw.
-          <br className="hidden lg:block" /> Explore.
-          <br className="hidden lg:block" /> Create.
-          <br className="hidden lg:block" /> What&apos;s next.
-        </p>
-        <div className="flex items-center gap-6 lg:flex-col lg:items-end">
-          <span className="tracked whitespace-nowrap text-[0.62rem] text-ink-faint">
-            0{index + 1} / 0{SLIDES.length}
-          </span>
-          <div className="flex gap-5">
-            <button
-              type="button"
-              onClick={() => move(-1)}
-              aria-label="Previous artwork"
-              className="text-ink-muted transition-colors hover:text-ink"
-            >
-              &#8592;
-            </button>
-            <button
-              type="button"
-              onClick={() => move(1)}
-              aria-label="Next artwork"
-              className="text-ink-muted transition-colors hover:text-ink"
-            >
-              &#8594;
-            </button>
+        {/* Right rail */}
+        <div className="flex items-end justify-between gap-8 lg:flex-col lg:items-end lg:gap-14">
+          <p className="tracked text-[0.62rem] uppercase leading-[2.4] opacity-70 lg:text-right">
+            Draw
+            <br />
+            Explore
+            <br />
+            Create
+            <br />
+            What&apos;s next.
+          </p>
+          <div className="flex items-center gap-5 lg:flex-col lg:items-end lg:gap-6">
+            <span className="tracked whitespace-nowrap text-[0.62rem] opacity-55">
+              0{index + 1} / 0{SLIDES.length}
+            </span>
+            <div className="flex gap-5">
+              <button
+                type="button"
+                onClick={() => move(-1)}
+                aria-label="Previous artwork"
+                className="opacity-70 transition-opacity hover:opacity-100"
+              >
+                &#8592;
+              </button>
+              <button
+                type="button"
+                onClick={() => move(1)}
+                aria-label="Next artwork"
+                className="opacity-70 transition-opacity hover:opacity-100"
+              >
+                &#8594;
+              </button>
+            </div>
           </div>
         </div>
       </div>

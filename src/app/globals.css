@@ -1,82 +1,82 @@
 @import "tailwindcss";
 
 :root {
-  /* Charcoal ground */
-  --bg: #0a0a0b;
-  --bg-raised: #111113;
-  --bg-panel: #0e0e10;
+  /* Palette per the brand board */
+  --charcoal: #111111;
+  --graphite: #4a4a4a;
+  --paper: #d6d1cb;
+  --chalk: #f4f4f2; /* board reads #F4F422 — treated as a typo, see notes */
+  --accent: #c7432e;
 
-  /* Ink */
-  --ink: #f4f2ef;
-  --ink-muted: rgba(244, 242, 239, 0.62);
-  --ink-faint: rgba(244, 242, 239, 0.34);
-  --rule: rgba(244, 242, 239, 0.14);
-
-  /* Single accent — approximated from the concept, pending exact brand hex */
-  --accent: #c8202a;
+  --rule-dark: rgba(244, 244, 242, 0.16);
+  --rule-light: rgba(17, 17, 17, 0.18);
 }
 
 @theme inline {
-  --color-bg: var(--bg);
-  --color-bg-raised: var(--bg-raised);
-  --color-bg-panel: var(--bg-panel);
-  --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
-  --color-ink-faint: var(--ink-faint);
-  --color-rule: var(--rule);
+  --color-charcoal: var(--charcoal);
+  --color-graphite: var(--graphite);
+  --color-paper: var(--paper);
+  --color-chalk: var(--chalk);
   --color-accent: var(--accent);
+  --color-rule-dark: var(--rule-dark);
+  --color-rule-light: var(--rule-light);
 
-  --font-display: var(--ff-display);
-  --font-sans: var(--ff-sans);
-  --font-script: var(--ff-script);
-  --font-serif: var(--ff-serif);
+  --font-sans: var(--ff-primary);
+  --font-secondary: var(--ff-secondary);
 }
 
 html {
-  background: var(--bg);
+  background: var(--charcoal);
   color-scheme: dark;
 }
 
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--ff-sans), system-ui, sans-serif;
+  background: var(--charcoal);
+  color: var(--chalk);
+  font-family: var(--ff-primary), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Charcoal paper grain, layered over dark panels */
 .grain::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.14;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Uneven charcoal wash so flat black never reads as flat */
-.wash {
-  background-image:
-    radial-gradient(120% 80% at 78% 18%, rgba(255, 255, 255, 0.055), transparent 60%),
-    radial-gradient(90% 70% at 8% 90%, rgba(255, 255, 255, 0.03), transparent 62%);
-}
-
 .tracked {
-  letter-spacing: 0.26em;
+  letter-spacing: 0.24em;
 }
 .tracked-wide {
-  letter-spacing: 0.42em;
+  letter-spacing: 0.4em;
 }
 
-/* Distressed edge on the display wordmark, echoing the concept's texture */
-.textured-type {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E"),
-    linear-gradient(var(--ink), var(--ink));
-  background-blend-mode: overlay;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Logan's signature ships as an alpha mask, so it can be tinted to any
+   colour and sit on either the charcoal or the paper panels. */
+.signature {
+  -webkit-mask-image: url("/artwork/signature.png");
+  mask-image: url("/artwork/signature.png");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: currentColor;
+  aspect-ratio: 1784 / 736;
+}
+
+/* Torn paper edge for the light panels */
+.torn-bottom {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400' preserveAspectRatio='none'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.09' numOctaves='4' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='26' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1200' height='372' fill='white' filter='url(%23r)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400' preserveAspectRatio='none'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.09' numOctaves='4' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='26' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1200' height='372' fill='white' filter='url(%23r)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 @media (prefers-reduced-motion: reduce) {

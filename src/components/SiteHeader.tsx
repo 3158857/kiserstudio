@@ -1,4 +1,4 @@
-const NAV = ["Work", "About", "Process", "Commissions", "Contact"];
+const NAV = ["Work", "About", "Process", "Contact"];
 
 function Instagram() {
   return (
@@ -9,7 +9,6 @@ function Instagram() {
     </svg>
   );
 }
-
 function YouTube() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -18,7 +17,6 @@ function YouTube() {
     </svg>
   );
 }
-
 function TikTok() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
@@ -26,32 +24,37 @@ function TikTok() {
     </svg>
   );
 }
-
-const SOCIALS = [
+export const SOCIALS = [
   { label: "Instagram", Icon: Instagram },
   { label: "YouTube", Icon: YouTube },
   { label: "TikTok", Icon: TikTok },
 ];
 
+export function Wordmark({ className = "" }: { className?: string }) {
+  return (
+    <a href="#" className={`shrink-0 leading-none ${className}`}>
+      <span className="block text-xl font-extrabold tracking-[0.14em] sm:text-2xl">
+        KISER
+      </span>
+      <span className="tracked-wide mt-1 block text-[0.58rem] opacity-70 sm:text-[0.62rem]">
+        STUDIO
+      </span>
+    </a>
+  );
+}
+
 export function SiteHeader() {
   return (
-    <header className="relative z-20 flex items-center justify-between gap-6 px-6 py-7 sm:px-10 lg:px-14">
-      <a href="#" className="shrink-0 leading-none">
-        <span className="block font-display text-2xl tracking-[0.16em] sm:text-[1.7rem]">
-          KISER
-        </span>
-        <span className="tracked-wide mt-1 block text-[0.6rem] text-ink-muted sm:text-[0.65rem]">
-          STUDIO
-        </span>
-      </a>
+    <header className="relative z-30 flex items-center justify-between gap-6 px-6 py-7 sm:px-10 lg:px-14">
+      <Wordmark />
 
       <nav className="hidden lg:block">
-        <ul className="flex items-center gap-9">
+        <ul className="flex items-center gap-10">
           {NAV.map((item) => (
             <li key={item}>
               <a
                 href={`#${item.toLowerCase()}`}
-                className="tracked text-[0.66rem] uppercase text-ink-muted transition-colors hover:text-ink"
+                className="tracked text-[0.66rem] uppercase opacity-70 transition-opacity hover:opacity-100"
               >
                 {item}
               </a>
@@ -61,10 +64,11 @@ export function SiteHeader() {
       </nav>
 
       <div className="flex items-center gap-5">
-        {/* Small-screen menu. <details> keeps this JS-free. */}
-        <details className="group relative lg:hidden">
+        <span className="hidden h-[2px] w-10 bg-accent lg:block" aria-hidden="true" />
+
+        <details className="relative lg:hidden">
           <summary
-            className="tracked flex cursor-pointer list-none items-center gap-2 text-[0.62rem] uppercase text-ink-muted marker:hidden hover:text-ink"
+            className="flex cursor-pointer list-none items-center marker:hidden"
             aria-label="Toggle navigation menu"
           >
             <span className="flex flex-col gap-[3px]" aria-hidden="true">
@@ -73,12 +77,12 @@ export function SiteHeader() {
               <span className="block h-px w-5 bg-current" />
             </span>
           </summary>
-          <ul className="absolute right-0 z-30 mt-4 w-48 border border-rule bg-bg-panel/95 p-5 backdrop-blur">
+          <ul className="absolute right-0 z-40 mt-4 w-48 border border-rule-dark bg-charcoal/95 p-5 backdrop-blur">
             {NAV.map((item) => (
               <li key={item} className="py-2">
                 <a
                   href={`#${item.toLowerCase()}`}
-                  className="tracked text-[0.66rem] uppercase text-ink-muted hover:text-ink"
+                  className="tracked text-[0.66rem] uppercase opacity-70 hover:opacity-100"
                 >
                   {item}
                 </a>
@@ -87,17 +91,18 @@ export function SiteHeader() {
           </ul>
         </details>
 
-        <span className="hidden h-px w-12 bg-rule lg:block" aria-hidden="true" />
-        {SOCIALS.map(({ label, Icon }) => (
-          <a
-            key={label}
-            href="#"
-            aria-label={label}
-            className="text-ink-muted transition-colors hover:text-ink"
-          >
-            <Icon />
-          </a>
-        ))}
+        <div className="hidden items-center gap-5 sm:flex">
+          {SOCIALS.map(({ label, Icon }) => (
+            <a
+              key={label}
+              href="#"
+              aria-label={label}
+              className="opacity-70 transition-opacity hover:opacity-100"
+            >
+              <Icon />
+            </a>
+          ))}
+        </div>
       </div>
     </header>
   );

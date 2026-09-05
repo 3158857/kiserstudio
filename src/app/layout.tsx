@@ -1,42 +1,32 @@
 import type { Metadata } from "next";
-import { Anton, Inter, Great_Vibes, Playfair_Display } from "next/font/google";
+import { Archivo, Montserrat } from "next/font/google";
 import "./globals.css";
 
-const display = Anton({
-  variable: "--ff-display",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const sans = Inter({
-  variable: "--ff-sans",
+/* Stand-in for Neue Haas Grotesk, which is a licensed face. Swap once
+   licensing is settled — see the note in the draft summary. */
+const primary = Archivo({
+  variable: "--ff-primary",
   subsets: ["latin"],
 });
 
-const script = Great_Vibes({
-  variable: "--ff-script",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const serif = Playfair_Display({
-  variable: "--ff-serif",
+const secondary = Montserrat({
+  variable: "--ff-secondary",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Kiser Studio — Charcoal Work by Logan Kiser",
+  title: "Kiser Studio — Charcoal Artwork by Logan Kiser",
   description:
-    "Same subject. Different perspective. Original charcoal drawings by Logan Kiser.",
+    "Art builds a brighter perspective. Original charcoal drawings by Logan Kiser — realistic artwork, expansive possibilities.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${script.variable} ${serif.variable} h-full antialiased`}
+      className={`${primary.variable} ${secondary.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-bg text-ink">{children}</body>
+      <body className="min-h-full bg-charcoal text-chalk">{children}</body>
     </html>
   );
 }
