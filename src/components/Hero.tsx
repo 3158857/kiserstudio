@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function Hero() {
   return (
-    <section className="relative isolate min-h-[58vh] overflow-hidden lg:min-h-[64vh]">
+    <section className="relative isolate flex min-h-[68vh] flex-col justify-end overflow-hidden lg:min-h-[64vh] lg:justify-start">
       {/* Artwork bleeds off the right edge, fading into the charcoal ground */}
       <div className="absolute inset-y-0 right-0 w-full lg:w-[64%]">
         <Image
@@ -17,7 +17,7 @@ export function Hero() {
         {/* Vertical scrim on narrow screens so the artwork isn't dimmed from
             the left; horizontal on desktop where the copy sits beside it. */}
         <div
-          className="absolute inset-0 bg-gradient-to-b from-charcoal via-charcoal/55 to-charcoal/5 lg:bg-gradient-to-r lg:from-charcoal lg:via-charcoal/55 lg:to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-transparent lg:bg-gradient-to-r lg:from-charcoal lg:via-charcoal/55 lg:to-transparent"
           aria-hidden="true"
         />
       </div>
