@@ -69,10 +69,12 @@ body {
   aspect-ratio: 1784 / 736;
 }
 
-/* Torn paper edge for the light panels */
-.torn-bottom {
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400' preserveAspectRatio='none'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.09' numOctaves='4' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='26' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1200' height='372' fill='white' filter='url(%23r)'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400' preserveAspectRatio='none'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.09' numOctaves='4' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='26' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1200' height='372' fill='white' filter='url(%23r)'/%3E%3C/svg%3E");
+/* Torn-paper bottom edge for the header bar. Procedural rather than a
+   bitmap, so it stretches to any viewport width and costs a few hundred
+   bytes. Applied to a chalk-filled strip hanging below the header. */
+.torn-edge {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='64' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-50%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.05' numOctaves='3' seed='21' result='big'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='big' scale='38' xChannelSelector='R' yChannelSelector='G' result='d1'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05 0.45' numOctaves='3' seed='7' result='fine'/%3E%3CfeDisplacementMap in='d1' in2='fine' scale='10' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1440' height='26' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='64' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-50%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.05' numOctaves='3' seed='21' result='big'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='big' scale='38' xChannelSelector='R' yChannelSelector='G' result='d1'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05 0.45' numOctaves='3' seed='7' result='fine'/%3E%3CfeDisplacementMap in='d1' in2='fine' scale='10' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect width='1440' height='26' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;

@@ -1,43 +1,27 @@
 export function About() {
   return (
-    <section id="about" className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-      {/* Placeholder: awaiting the charcoal-tools photograph from the board */}
-      <div className="grain relative flex min-h-[260px] items-end bg-graphite/25 p-8 sm:p-12">
-        <p className="tracked relative z-10 text-[0.62rem] uppercase leading-[2.2] opacity-60">
-          Traditional
-          <br />
-          tools.
-          <br />
-          Limitless
-          <br />
-          possibilities.
-        </p>
-      </div>
-
-      <div className="bg-charcoal px-8 py-14 sm:px-12 lg:px-16 lg:py-20">
+    <section id="about" className="grain relative bg-charcoal px-6 py-16 sm:px-10 lg:px-14 lg:py-24">
+      <div className="relative z-10">
         <div className="flex items-center gap-4">
-          <span className="tracked text-[0.62rem] uppercase opacity-70">About</span>
+          <span className="tracked text-[0.62rem] uppercase opacity-80">About</span>
           <span className="h-[3px] w-10 bg-accent" aria-hidden="true" />
         </div>
 
-        <h2 className="mt-6 max-w-md text-[1.75rem] font-extrabold uppercase leading-[1.1] sm:text-4xl">
+        <h2 className="mt-6 max-w-2xl text-[1.75rem] font-extrabold uppercase leading-[1.1] sm:text-4xl lg:text-[2.6rem]">
           A different perspective drives everything.
         </h2>
 
-        <p className="font-secondary mt-6 max-w-lg text-[0.95rem] leading-relaxed opacity-75">
+        <p className="font-secondary mt-6 max-w-xl text-[0.95rem] leading-relaxed opacity-85">
           Kiser Studio is the home of artist Logan Kiser, where detailed realism
           meets curiosity, discipline, and a constant drive to see things
           differently.
         </p>
 
         <a
-          href="#process"
-          className="group mt-9 inline-flex items-center gap-4 border border-rule-dark px-7 py-3.5 transition-colors hover:border-chalk"
+          href="mailto:logankiser08@gmail.com"
+          className="font-secondary mt-8 inline-block border-b border-chalk/30 pb-1 text-[0.95rem] transition-colors hover:border-accent"
         >
-          <span className="tracked text-[0.62rem] uppercase">Learn More</span>
-          <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
-            &#8594;
-          </span>
+          logankiser08@gmail.com
         </a>
       </div>
     </section>

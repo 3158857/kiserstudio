@@ -1,25 +1,17 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { Hero } from "@/components/Hero";
 import { FeaturedWork } from "@/components/FeaturedWork";
-import { QuoteBand } from "@/components/QuoteBand";
 import { About } from "@/components/About";
-import { SignatureBand } from "@/components/SignatureBand";
-import { SiteFooter } from "@/components/SiteFooter";
 
 export default function Home() {
   return (
     <>
-      <div className="relative">
-        <div className="absolute inset-x-0 top-0 z-30">
-          <SiteHeader />
-        </div>
-        <Hero />
-      </div>
+      <SiteHeader />
+      <Hero />
       <FeaturedWork />
-      <QuoteBand />
       <About />
-      <SignatureBand />
-      <SiteFooter />
+      {/* Terminates the page with the accent, now that the footer is gone */}
+      <div className="h-1.5 w-full bg-accent" role="presentation" />
     </>
   );
 }
