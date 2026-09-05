@@ -1,29 +1,42 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Anton, Inter, Great_Vibes, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const display = Anton({
+  variable: "--ff-display",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const sans = Inter({
+  variable: "--ff-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const script = Great_Vibes({
+  variable: "--ff-script",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const serif = Playfair_Display({
+  variable: "--ff-serif",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Kiser Studio",
-  description: "Kiser Studio — coming soon.",
+  title: "Kiser Studio — Charcoal Work by Logan Kiser",
+  description:
+    "Same subject. Different perspective. Original charcoal drawings by Logan Kiser.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${display.variable} ${sans.variable} ${script.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full bg-bg text-ink">{children}</body>
     </html>
   );
 }
