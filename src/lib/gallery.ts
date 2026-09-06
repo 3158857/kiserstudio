@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import { listUploads, readManifest, type ManifestItem } from "@/lib/store";
+import {
+  listUploads,
+  readManifestDetailed,
+  type ManifestItem,
+  type ManifestSource,
+} from "@/lib/store";
 
 export type GalleryItem = ManifestItem & {
   /** False when the image exists but the manifest hasn't seen it yet. */
@@ -28,8 +33,18 @@ function repoFiles(): { id: string; url: string }[] {
  * image that exists but isn't in it yet — repo files or fresh uploads —
  * appended and hidden, so nothing goes public uncurated.
  */
-export async function getGalleryForAdmin(): Promise<GalleryItem[]> {
-  const [manifest, uploads] = await Promise.all([readManifest(), listUploads()]);
+export type AdminGallery = {
+  items: GalleryItem[];
+  source: ManifestSource;
+  error?: string;
+};
+
+export async function getGalleryForAdmin(): Promise<AdminGallery> {
+  const [read, uploads] = await Promise.all([
+    readManifestDetailed(),
+    listUploads(),
+  ]);
+  const manifest = read.items;
 
   const available = new Map<string, { url: string; source: "repo" | "upload" }>();
   for (const f of repoFiles()) available.set(f.id, { url: f.url, source: "repo" });
@@ -60,10 +75,10 @@ export async function getGalleryForAdmin(): Promise<GalleryItem[]> {
       inManifest: false,
     }));
 
-  return [...ordered, ...newcomers];
+  return { items: [...ordered, ...newcomers], source: read.source, error: read.error };
 }
 
 /** What the public gallery renders. One manifest read, no listing. */
 export async function getVisibleGallery(): Promise<ManifestItem[]> {
-  return (await readManifest()).filter((i) => i.visible);
+  return (await readManifestDetailed()).items.filter((i) => i.visible);
 }

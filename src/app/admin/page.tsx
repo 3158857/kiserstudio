@@ -16,7 +16,14 @@ export default async function AdminPage() {
   // serialised into the redirect response.
   if (!(await isAuthenticated())) redirect("/login");
 
+  const gallery = await getGalleryForAdmin();
+
   return (
-    <GalleryAdmin items={await getGalleryForAdmin()} blobReady={isBlobConfigured()} />
+    <GalleryAdmin
+      items={gallery.items}
+      blobReady={isBlobConfigured()}
+      manifestSource={gallery.source}
+      manifestError={gallery.error}
+    />
   );
 }

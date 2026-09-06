@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { list, put } from "@vercel/blob";
+import { get, list, put } from "@vercel/blob";
 import bootstrap from "@/data/gallery.json";
 
 export type ManifestItem = {
@@ -38,35 +38,55 @@ function normalise(raw: unknown): ManifestItem[] {
   });
 }
 
+export type ManifestSource = "blob" | "local" | "bootstrap";
+export type ManifestRead = {
+  items: ManifestItem[];
+  source: ManifestSource;
+  error?: string;
+};
+
 /**
  * Manifest precedence: Blob, then the local dev file, then the committed
- * bootstrap in src/data. The bootstrap means a fresh store still renders the
- * gallery that is live today rather than an empty page.
+ * bootstrap in src/data. Reads go straight to origin (`useCache: false`)
+ * because the blob's own CDN copy would otherwise serve a just-published
+ * manifest up to a minute stale.
+ *
+ * Returns the source and any error so the admin can show which store it is
+ * actually reading — swallowing these silently made a read failure look
+ * identical to an empty store.
  */
-export async function readManifest(): Promise<ManifestItem[]> {
+export async function readManifestDetailed(): Promise<ManifestRead> {
   if (isBlobConfigured()) {
     try {
-      const { blobs } = await list({ prefix: MANIFEST_PATH, limit: 1 });
-      const found = blobs.find((b) => b.pathname === MANIFEST_PATH);
-      if (found) {
-        const res = await fetch(found.url, { cache: "no-store" });
-        if (res.ok) {
-          const parsed = await res.json();
-          return normalise(parsed?.items);
-        }
+      const found = await get(MANIFEST_PATH, {
+        access: "public",
+        useCache: false,
+      });
+      if (found && found.statusCode === 200) {
+        const parsed = await new Response(found.stream).json();
+        return { items: normalise(parsed?.items), source: "blob" };
       }
-    } catch {
-      // Fall through to the bootstrap rather than break the page.
+      // null means the manifest hasn't been written yet — expected on a new store.
+      return { items: normalise(bootstrap.items), source: "bootstrap" };
+    } catch (err) {
+      return {
+        items: normalise(bootstrap.items),
+        source: "bootstrap",
+        error: (err as Error).message || "Blob read failed.",
+      };
     }
-    return normalise(bootstrap.items);
   }
 
   try {
     const raw = await fs.readFile(LOCAL_MANIFEST, "utf8");
-    return normalise(JSON.parse(raw)?.items);
+    return { items: normalise(JSON.parse(raw)?.items), source: "local" };
   } catch {
-    return normalise(bootstrap.items);
+    return { items: normalise(bootstrap.items), source: "bootstrap" };
   }
+}
+
+export async function readManifest(): Promise<ManifestItem[]> {
+  return (await readManifestDetailed()).items;
 }
 
 export async function writeManifest(items: ManifestItem[]): Promise<void> {

@@ -12,9 +12,13 @@ const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 export function GalleryAdmin({
   items,
   blobReady,
+  manifestSource,
+  manifestError,
 }: {
   items: GalleryItem[];
   blobReady: boolean;
+  manifestSource: "blob" | "local" | "bootstrap";
+  manifestError?: string;
 }) {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -94,6 +98,13 @@ export function GalleryAdmin({
       <h1 className="text-2xl font-extrabold uppercase tracking-tight">Gallery admin</h1>
       <p className="font-secondary mt-3 text-sm opacity-70">
         {rows.length} images · {visibleCount} shown in the gallery
+      </p>
+      <p className="font-secondary mt-1 text-xs opacity-50">
+        Reading manifest from: <strong>{manifestSource}</strong>
+        {manifestSource === "bootstrap" && !manifestError && " (nothing published yet)"}
+        {manifestError && (
+          <span className="text-accent"> — {manifestError}</span>
+        )}
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3 border border-rule-dark bg-white/[0.03] p-5">
