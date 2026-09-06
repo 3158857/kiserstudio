@@ -6,7 +6,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <a href="#" className={`shrink-0 leading-none ${className}`} aria-label="Kiser Studio — home">
       <Image
-        src="/artwork/logo.png"
+        src="/brand/logo.png"
         alt="Kiser Studio"
         width={900}
         height={254}

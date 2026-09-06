@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "file": "fox.jpg", "caption": "Wildlife", "visible": true },
+    { "file": "spartan.jpg", "caption": "Figures", "visible": true },
+    { "file": "stingray.jpg", "caption": "Studies", "visible": true },
+    { "file": "cat.jpg", "caption": "", "visible": false }
+  ]
+}

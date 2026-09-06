@@ -3,18 +3,9 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type Piece = { title: string; src?: string; alt?: string };
+export type GalleryPiece = { file: string; caption: string };
 
-// Three real pieces so far. The rest are placeholders standing in for future
-// uploads — swap each `src`/`alt` in as Logan's scans arrive.
-const WORK: Piece[] = [
-  { title: "Wildlife", src: "/artwork/fox.jpg", alt: "Charcoal drawing of a fox in profile" },
-  { title: "Figures", src: "/artwork/spartan.jpg", alt: "Charcoal drawing of a helmeted Roman soldier" },
-  { title: "Studies", src: "/artwork/stingray.jpg", alt: "Charcoal drawing of a manta ray gliding underwater" },
-  ...Array.from({ length: 7 }, (_, i) => ({ title: `Artwork ${String(i + 4).padStart(2, "0")}` })),
-];
-
-export function FeaturedWork() {
+export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -80,39 +71,24 @@ export function FeaturedWork() {
           aria-label="Artwork gallery"
           className="mt-8 flex snap-x snap-proximity gap-6 overflow-x-auto scroll-smooth pb-2 pl-6 scroll-pl-6 sm:pl-10 sm:scroll-pl-10 lg:pl-14 lg:scroll-pl-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {WORK.map((piece) => (
+          {items.map((piece) => (
             <li
-              key={piece.title}
+              key={piece.file}
               className="w-[54%] shrink-0 snap-start sm:w-[37%] lg:w-[25%]"
             >
-              {piece.src ? (
-                <>
-                  <div className="relative aspect-[4/5] overflow-hidden bg-graphite/20">
-                    <Image
-                      src={piece.src}
-                      alt={piece.alt ?? piece.title}
-                      fill
-                      sizes="(max-width: 640px) 54vw, (max-width: 1024px) 37vw, 25vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <h3 className="tracked mt-3 text-[0.62rem] font-semibold uppercase">
-                    {piece.title}
-                  </h3>
-                </>
-              ) : (
-                <>
-                  <div className="flex aspect-[4/5] items-center justify-center border border-dashed border-charcoal/25 bg-charcoal/[0.04]">
-                    <span className="tracked text-[0.55rem] uppercase text-charcoal/35">
-                      {piece.title}
-                    </span>
-                  </div>
-                  {/* Keeps the caption rhythm while the title is still unknown */}
-                  <div
-                    className="mt-3 h-[0.62rem] w-20 rounded-[1px] bg-charcoal/10"
-                    aria-hidden="true"
-                  />
-                </>
+              <div className="relative aspect-[4/5] overflow-hidden bg-graphite/20">
+                <Image
+                  src={`/artwork/${piece.file}`}
+                  alt={piece.caption || "Charcoal drawing by Logan Kiser"}
+                  fill
+                  sizes="(max-width: 640px) 54vw, (max-width: 1024px) 37vw, 25vw"
+                  className="object-cover"
+                />
+              </div>
+              {piece.caption && (
+                <h3 className="tracked mt-3 text-[0.62rem] font-semibold uppercase">
+                  {piece.caption}
+                </h3>
               )}
             </li>
           ))}

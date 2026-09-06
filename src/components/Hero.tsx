@@ -35,11 +35,11 @@ export function Hero() {
 
       <div className="relative z-10 max-w-2xl">
         <h1 className="text-[7vw] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] sm:text-5xl lg:text-[3.4rem]">
-          Same subject.
+          Same subject
           <br />
-          Different
+          with different
           <br />
-          perspective.
+          perspectives.
         </h1>
       </div>
 
