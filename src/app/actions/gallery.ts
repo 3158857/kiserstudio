@@ -19,6 +19,9 @@ export async function saveGallery(items: ManifestItem[]): Promise<SaveResult> {
     url: String(i.url).slice(0, 2000),
     caption: String(i.caption ?? "").slice(0, 200),
     visible: Boolean(i.visible),
+    ...(typeof i.aspect === "number" && i.aspect > 0
+      ? { aspect: Number(i.aspect.toFixed(4)) }
+      : {}),
   }));
 
   // On Vercel the filesystem is read-only, so the local dev fallback cannot

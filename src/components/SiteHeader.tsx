@@ -19,11 +19,11 @@ export function Wordmark({ className = "" }: { className?: string }) {
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between gap-6 bg-chalk px-6 py-5 text-charcoal sm:px-10 lg:px-14">
+    <header className="sticky top-0 z-50 flex items-center justify-between gap-6 bg-chalk px-6 py-3 text-charcoal sm:px-10 lg:px-14">
       {/* Torn lower edge, continuing the bar's chalk past the header box */}
       <span
         aria-hidden="true"
-        className="torn-edge pointer-events-none absolute inset-x-0 top-full -mt-px h-16 bg-chalk"
+        className="torn-edge pointer-events-none absolute inset-x-0 top-full -mt-px h-12 bg-chalk"
       />
 
       <Wordmark />

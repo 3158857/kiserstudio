@@ -9,6 +9,8 @@ export type ManifestItem = {
   url: string;
   caption: string;
   visible: boolean;
+  /** width / height. Absent on items published before masonry existed. */
+  aspect?: number;
 };
 
 export const MANIFEST_PATH = "gallery/manifest.json";
@@ -25,7 +27,7 @@ function normalise(raw: unknown): ManifestItem[] {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((entry) => {
     if (typeof entry !== "object" || entry === null) return [];
-    const { id, url, caption, visible } = entry as Record<string, unknown>;
+    const { id, url, caption, visible, aspect } = entry as Record<string, unknown>;
     if (typeof id !== "string" || typeof url !== "string") return [];
     return [
       {
@@ -33,6 +35,7 @@ function normalise(raw: unknown): ManifestItem[] {
         url,
         caption: typeof caption === "string" ? caption : "",
         visible: Boolean(visible),
+        ...(typeof aspect === "number" && aspect > 0 ? { aspect } : {}),
       },
     ];
   });

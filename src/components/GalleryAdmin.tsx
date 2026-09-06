@@ -43,15 +43,29 @@ export function GalleryAdmin({
   const update = (id: string, patch: Partial<GalleryItem>) =>
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
+  // The optimiser preserves aspect, so the thumbnail is enough to measure it.
+  // This is how uploads get their aspect recorded — repo files are measured
+  // server-side from their headers.
+  const captureAspect = (id: string, el: HTMLImageElement) => {
+    if (!el.naturalWidth || !el.naturalHeight) return;
+    const aspect = Number((el.naturalWidth / el.naturalHeight).toFixed(4));
+    setRows((prev) =>
+      prev.map((r) =>
+        r.id === id && r.aspect !== aspect ? { ...r, aspect } : r,
+      ),
+    );
+  };
+
   const save = () => {
     setError(null);
     setStatus(null);
     startSaving(async () => {
-      const payload = rows.map(({ id, url, caption, visible }) => ({
+      const payload = rows.map(({ id, url, caption, visible, aspect }) => ({
         id,
         url,
         caption,
         visible,
+        aspect,
       }));
       const result = await saveGallery(payload);
       if (result.ok) {
@@ -167,6 +181,7 @@ export function GalleryAdmin({
                 fill
                 sizes="80px"
                 className="object-cover"
+                onLoad={(e) => captureAspect(row.id, e.currentTarget)}
               />
             </div>
 

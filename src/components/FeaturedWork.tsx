@@ -3,7 +3,15 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type GalleryPiece = { id: string; url: string; caption: string };
+export type GalleryPiece = {
+  id: string;
+  url: string;
+  caption: string;
+  aspect?: number;
+};
+
+// Used when a piece has no recorded aspect yet.
+const FALLBACK_ASPECT = 0.8;
 
 export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
@@ -28,9 +36,9 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const scrollBy = (dir: number) => {
     const el = trackRef.current;
     if (!el) return;
-    const card = el.querySelector("li");
-    const step = card ? card.getBoundingClientRect().width + 24 : el.clientWidth * 0.8;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
+    // Cards vary in width now, so step by a fraction of the viewport rather
+    // than by one card.
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
   };
 
   return (
@@ -72,16 +80,18 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
           className="mt-8 flex snap-x snap-proximity gap-6 overflow-x-auto scroll-smooth pb-2 pl-6 scroll-pl-6 sm:pl-10 sm:scroll-pl-10 lg:pl-14 lg:scroll-pl-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {items.map((piece) => (
-            <li
-              key={piece.id}
-              className="w-[54%] shrink-0 snap-start sm:w-[37%] lg:w-[25%]"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden bg-graphite/20">
+            <li key={piece.id} className="shrink-0 snap-start">
+              {/* Fixed height, width derived from the artwork's own aspect —
+                  so portraits and landscapes both show uncropped. */}
+              <div
+                className="relative h-56 overflow-hidden bg-graphite/20 sm:h-64 lg:h-[20rem]"
+                style={{ aspectRatio: piece.aspect ?? FALLBACK_ASPECT }}
+              >
                 <Image
                   src={piece.url}
                   alt={piece.caption || "Charcoal drawing by Logan Kiser"}
                   fill
-                  sizes="(max-width: 640px) 54vw, (max-width: 1024px) 37vw, 25vw"
+                  sizes="(max-width: 640px) 60vw, 30vw"
                   className="object-cover"
                 />
               </div>

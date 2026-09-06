@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileAspect } from "@/lib/image-size";
 import {
   listUploads,
   readManifestDetailed,
@@ -15,6 +16,31 @@ export type GalleryItem = ManifestItem & {
 
 const ARTWORK_DIR = path.join(process.cwd(), "public", "artwork");
 const IMAGE = /\.(jpe?g|png|webp|avif)$/i;
+
+function repoPath(id: string): string | null {
+  if (!id.startsWith("repo:")) return null;
+  const file = id.slice("repo:".length);
+  // Guard against traversal via a crafted manifest entry.
+  if (file.includes("/") || file.includes("..")) return null;
+  return path.join(ARTWORK_DIR, file);
+}
+
+/**
+ * Fills in aspect for repo images by reading their headers, so existing
+ * artwork lays out correctly without needing to be re-published. Uploads
+ * carry their aspect in the manifest, measured in the browser.
+ */
+async function withAspect<T extends ManifestItem>(items: T[]): Promise<T[]> {
+  return Promise.all(
+    items.map(async (item) => {
+      if (typeof item.aspect === "number" && item.aspect > 0) return item;
+      const file = repoPath(item.id);
+      if (!file) return item;
+      const aspect = await fileAspect(file);
+      return aspect ? { ...item, aspect } : item;
+    }),
+  );
+}
 
 function repoFiles(): { id: string; url: string }[] {
   try {
@@ -75,10 +101,15 @@ export async function getGalleryForAdmin(): Promise<AdminGallery> {
       inManifest: false,
     }));
 
-  return { items: [...ordered, ...newcomers], source: read.source, error: read.error };
+  return {
+    items: await withAspect([...ordered, ...newcomers]),
+    source: read.source,
+    error: read.error,
+  };
 }
 
 /** What the public gallery renders. One manifest read, no listing. */
 export async function getVisibleGallery(): Promise<ManifestItem[]> {
-  return (await readManifestDetailed()).items.filter((i) => i.visible);
+  const visible = (await readManifestDetailed()).items.filter((i) => i.visible);
+  return withAspect(visible);
 }
