@@ -13,6 +13,10 @@ export type GalleryPiece = {
 // Used when a piece has no recorded aspect yet.
 const FALLBACK_ASPECT = 0.8;
 
+// Everything Logan makes is charcoal on paper, so this is a default rather
+// than a per-piece field. Move it into the manifest if that ever changes.
+const MEDIUM = "Charcoal on paper";
+
 export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [atStart, setAtStart] = useState(true);
@@ -79,7 +83,7 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
           aria-label="Artwork gallery"
           className="mt-8 flex snap-x snap-proximity gap-6 overflow-x-auto scroll-smooth pb-2 pl-6 scroll-pl-6 sm:pl-10 sm:scroll-pl-10 lg:pl-14 lg:scroll-pl-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {items.map((piece) => (
+          {items.map((piece, i) => (
             <li key={piece.id} className="shrink-0 snap-start">
               {/* Fixed height, width derived from the artwork's own aspect —
                   so portraits and landscapes both show uncropped. */}
@@ -95,11 +99,21 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
                   className="object-cover"
                 />
               </div>
-              {piece.caption && (
-                <h3 className="tracked mt-3 text-[0.62rem] font-semibold uppercase">
-                  {piece.caption}
-                </h3>
-              )}
+              <div className="mt-4 flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  {piece.caption && (
+                    <h3 className="tracked text-[0.72rem] font-semibold uppercase leading-snug">
+                      {piece.caption}
+                    </h3>
+                  )}
+                  <p className="font-secondary mt-1.5 text-[0.7rem] leading-snug opacity-55">
+                    {MEDIUM}
+                  </p>
+                </div>
+                <span className="tracked shrink-0 pt-0.5 text-[0.58rem] tabular-nums opacity-35">
+                  {String(i + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+                </span>
+              </div>
             </li>
           ))}
           {/* Right-edge gutter: gap-6 (24px) already trails the last card, so
