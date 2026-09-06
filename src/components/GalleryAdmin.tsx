@@ -16,6 +16,24 @@ const MAX_UPLOAD_BYTES = 60 * 1024 * 1024;
 const MAX_EDGE = 1600;
 const JPEG_QUALITY = 0.85;
 
+/**
+ * Only the fields that actually get written. Blank and absent are treated the
+ * same so clearing a field doesn't read as a pending change forever.
+ */
+function fingerprint(list: GalleryItem[]): string {
+  return JSON.stringify(
+    list.map((r) => [
+      r.id,
+      r.url,
+      r.caption ?? "",
+      r.medium ?? "",
+      r.dimensions ?? "",
+      r.visible,
+      r.aspect ?? null,
+    ]),
+  );
+}
+
 const FIELD =
   "font-secondary w-full border border-rule-dark bg-transparent px-3 py-2 text-sm outline-none focus:border-chalk/60";
 
@@ -66,12 +84,18 @@ export function GalleryAdmin({
   const fileInput = useRef<HTMLInputElement>(null);
 
   const [rows, setRows] = useState<GalleryItem[]>(items);
+  // Baseline for the dirty check. Compared on persisted fields only: the
+  // server also returns inManifest and source, which are derived and never
+  // saved, so including them left the button permanently "unpublished" after
+  // a successful save — publishing a new piece flips inManifest to true on
+  // the server while local state still says false.
+  const [baseline, setBaseline] = useState(() => fingerprint(items));
   const [saving, startSaving] = useTransition();
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
 
-  const dirty = JSON.stringify(rows) !== JSON.stringify(items);
+  const dirty = fingerprint(rows) !== baseline;
 
   const move = (index: number, delta: number) =>
     setRows((prev) => {
@@ -116,6 +140,7 @@ export function GalleryAdmin({
       const result = await saveGallery(payload);
       if (result.ok) {
         setStatus("Published");
+        setBaseline(fingerprint(rows));
         router.refresh();
       } else {
         setError(result.error ?? "Save failed.");
