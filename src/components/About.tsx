@@ -1,5 +1,4 @@
-import { EmailLink } from "./EmailLink";
-import { Socials } from "./Socials";
+import { ContactLinks } from "./ContactLinks";
 
 export function About() {
   return (
@@ -31,12 +30,7 @@ export function About() {
           </p>
         </div>
 
-        {/* Instagram first: the email's revealed address is absolutely
-            positioned, so it needs clear space to its right. */}
-        <div className="mt-8 flex items-center gap-7">
-          <Socials />
-          <EmailLink />
-        </div>
+        <ContactLinks className="mt-8" />
       </div>
     </section>
   );
