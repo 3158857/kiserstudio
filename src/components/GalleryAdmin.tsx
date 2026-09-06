@@ -94,8 +94,34 @@ export function GalleryAdmin({
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
+  // Staged, not immediate: a mis-click is undone with Discard, and the
+  // irreversible Blob delete only happens when you publish.
+  const [removals, setRemovals] = useState<{ item: GalleryItem; index: number }[]>([]);
+  const [confirming, setConfirming] = useState<GalleryItem | null>(null);
 
-  const dirty = fingerprint(rows) !== baseline;
+  const dirty = fingerprint(rows) !== baseline || removals.length > 0;
+
+  const stageRemoval = (item: GalleryItem) => {
+    setRows((prev) => {
+      // Remember where it sat so Undo puts it back rather than at the end,
+      // which would otherwise leave the list reordered and look unsaved.
+      const index = prev.findIndex((r) => r.id === item.id);
+      setRemovals((r) => [...r, { item, index }]);
+      return prev.filter((r) => r.id !== item.id);
+    });
+    setConfirming(null);
+  };
+
+  const undoRemoval = (id: string) => {
+    const entry = removals.find((r) => r.item.id === id);
+    if (!entry) return;
+    setRemovals((prev) => prev.filter((r) => r.item.id !== id));
+    setRows((prev) => {
+      const next = [...prev];
+      next.splice(Math.min(entry.index, next.length), 0, entry.item);
+      return next;
+    });
+  };
 
   const move = (index: number, delta: number) =>
     setRows((prev) => {
@@ -137,9 +163,21 @@ export function GalleryAdmin({
           aspect,
         }),
       );
-      const result = await saveGallery(payload);
+      // Repo files can't be deleted at runtime, so they persist as archived
+      // tombstones; uploads are named for deletion from the store.
+      const tombstones = removals
+        .filter(({ item }) => item.source === "repo")
+        .map(({ item }) => ({ ...item, visible: false, archived: true }));
+      const removeBlobs = removals
+        .filter(({ item }) => item.source === "upload")
+        .map(({ item }) => item.id.replace(/^blob:/, ""));
+
+      const result = await saveGallery([...payload, ...tombstones], removeBlobs);
       if (result.ok) {
-        setStatus("Published");
+        setStatus(
+          result.deleted ? `Published · ${result.deleted} file(s) deleted` : "Published",
+        );
+        setRemovals([]);
         setBaseline(fingerprint(rows));
         router.refresh();
       } else {
@@ -240,6 +278,31 @@ export function GalleryAdmin({
         )}
       </div>
 
+      {removals.length > 0 && (
+        <ul className="mt-6 space-y-2 border border-accent/40 p-4">
+          {removals.map(({ item }) => (
+            <li
+              key={item.id}
+              className="font-secondary flex items-center justify-between gap-4 text-xs"
+            >
+              <span className="truncate opacity-70">
+                <span className="line-through">
+                  {item.caption || item.id.replace(/^(repo|blob):/, "")}
+                </span>
+                {" — removed on publish"}
+              </span>
+              <button
+                type="button"
+                onClick={() => undoRemoval(item.id)}
+                className="tracked shrink-0 text-[0.58rem] uppercase underline underline-offset-2 hover:text-accent"
+              >
+                Undo
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <ul className="mt-8 space-y-3">
         {rows.map((row, i) => (
           <li
@@ -323,7 +386,15 @@ export function GalleryAdmin({
               </label>
             </div>
 
-            <div className="flex shrink-0 flex-col gap-1">
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <button
+                type="button"
+                onClick={() => setConfirming(row)}
+                aria-label={`Remove ${row.caption || row.id}`}
+                className="mb-1 px-2 text-base leading-none opacity-40 transition-opacity hover:text-accent hover:opacity-100"
+              >
+                &times;
+              </button>
               <button
                 type="button"
                 onClick={() => move(i, -1)}
@@ -346,6 +417,51 @@ export function GalleryAdmin({
           </li>
         ))}
       </ul>
+
+      {confirming && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="remove-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setConfirming(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setConfirming(null);
+          }}
+        >
+          <div className="w-full max-w-md border border-rule-dark bg-charcoal p-6">
+            <h2 id="remove-title" className="text-lg font-extrabold uppercase tracking-tight">
+              Remove {confirming.caption || "this piece"}?
+            </h2>
+
+            <p className="font-secondary mt-3 text-sm leading-relaxed opacity-75">
+              {confirming.source === "upload"
+                ? "The image file will be deleted permanently from storage when you publish. This can't be undone."
+                : "It will be hidden from the gallery and the admin when you publish. The file stays in the repository and remains reachable at its URL."}
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirming(null)}
+                className="tracked border border-chalk/25 px-5 py-2.5 text-[0.62rem] uppercase transition-colors hover:border-chalk"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                autoFocus
+                onClick={() => stageRemoval(confirming)}
+                className="tracked border border-accent bg-accent px-5 py-2.5 text-[0.62rem] uppercase text-chalk transition-opacity hover:opacity-85"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

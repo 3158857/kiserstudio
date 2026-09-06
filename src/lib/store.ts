@@ -14,6 +14,12 @@ export type ManifestItem = {
   /** e.g. '9 x 12 in., Unframed'. Omitted from the card when empty. */
   dimensions?: string;
   visible: boolean;
+  /**
+   * Tombstone for repo images, which can't be deleted at runtime — the file
+   * stays on disk, but this keeps it out of the admin and the gallery instead
+   * of reappearing as a new discovery on every load.
+   */
+  archived?: boolean;
   /** width / height. Absent on items published before masonry existed. */
   aspect?: number;
 };
@@ -32,7 +38,7 @@ function normalise(raw: unknown): ManifestItem[] {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((entry) => {
     if (typeof entry !== "object" || entry === null) return [];
-    const { id, url, caption, medium, dimensions, visible, aspect } =
+    const { id, url, caption, medium, dimensions, visible, archived, aspect } =
       entry as Record<string, unknown>;
     if (typeof id !== "string" || typeof url !== "string") return [];
     return [
@@ -43,6 +49,7 @@ function normalise(raw: unknown): ManifestItem[] {
         visible: Boolean(visible),
         ...(typeof medium === "string" && medium ? { medium } : {}),
         ...(typeof dimensions === "string" && dimensions ? { dimensions } : {}),
+        ...(archived ? { archived: true } : {}),
         ...(typeof aspect === "number" && aspect > 0 ? { aspect } : {}),
       },
     ];

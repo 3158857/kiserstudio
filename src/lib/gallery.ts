@@ -78,10 +78,11 @@ export async function getGalleryForAdmin(): Promise<AdminGallery> {
     available.set(`blob:${u.pathname}`, { url: u.url, source: "upload" });
   }
 
+  // Archived ids stay known so they aren't re-offered as new discoveries.
   const known = new Set(manifest.map((m) => m.id));
 
   const ordered: GalleryItem[] = manifest
-    .filter((m) => available.has(m.id))
+    .filter((m) => !m.archived && available.has(m.id))
     .map((m) => ({
       ...m,
       // Trust the live URL over the stored one: blob URLs can change.
@@ -110,6 +111,8 @@ export async function getGalleryForAdmin(): Promise<AdminGallery> {
 
 /** What the public gallery renders. One manifest read, no listing. */
 export async function getVisibleGallery(): Promise<ManifestItem[]> {
-  const visible = (await readManifestDetailed()).items.filter((i) => i.visible);
+  const visible = (await readManifestDetailed()).items.filter(
+    (i) => i.visible && !i.archived,
+  );
   return withAspect(visible);
 }
