@@ -1,4 +1,14 @@
-const EMAIL = "logankiser08@gmail.com";
+"use client";
+
+import Image from "next/image";
+
+/**
+ * The address is base64 here and rendered visually as an image, so neither the
+ * HTML source nor a regex over the bundle yields a matchable email. Assembled
+ * only on click. This is obfuscation, not security — anything running a real
+ * browser can still read it.
+ */
+const ENCODED = "bG9nYW5raXNlcjA4QGdtYWlsLmNvbQ==";
 
 function MailIcon() {
   return (
@@ -9,27 +19,35 @@ function MailIcon() {
   );
 }
 
-/**
- * Shows an envelope that swaps to the address on hover or keyboard focus.
- * The address is absolutely positioned so revealing it doesn't reflow the
- * surrounding copy, and the link works on touch regardless of hover.
- */
 export function EmailLink({ className = "" }: { className?: string }) {
+  const open = () => {
+    window.location.href = `mailto:${atob(ENCODED)}`;
+  };
+
   return (
-    <a
-      href={`mailto:${EMAIL}`}
-      aria-label={`Email ${EMAIL}`}
-      className={`group relative inline-flex h-6 items-center opacity-80 transition-opacity hover:opacity-100 focus-visible:opacity-100 ${className}`}
+    <button
+      type="button"
+      onClick={open}
+      // Spoken form: read correctly by screen readers, not harvestable by a
+      // scraper matching on an @ pattern.
+      aria-label="Email Logan at logankiser08 at gmail dot com"
+      className={`group relative inline-flex h-6 cursor-pointer items-center opacity-80 transition-opacity hover:opacity-100 focus-visible:opacity-100 ${className}`}
     >
       <span className="transition-opacity duration-200 group-hover:opacity-0 group-focus-visible:opacity-0">
         <MailIcon />
       </span>
-      <span
+      <Image
+        src="/brand/email.png"
+        alt=""
+        width={400}
+        height={36}
         aria-hidden="true"
-        className="font-secondary pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 whitespace-nowrap border-b border-chalk/30 pb-0.5 text-[0.95rem] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
-      >
-        {EMAIL}
-      </span>
-    </a>
+        unoptimized
+        // Eager: it's 10KB and revealed on hover, so lazy risks a blank
+        // first reveal if the pointer arrives before it intersects.
+        loading="eager"
+        className="pointer-events-none absolute left-0 top-1/2 w-[200px] max-w-none -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
+      />
+    </button>
   );
 }
