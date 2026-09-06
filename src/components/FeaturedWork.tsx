@@ -7,15 +7,17 @@ export type GalleryPiece = {
   id: string;
   url: string;
   caption: string;
+  medium?: string;
+  dimensions?: string;
   aspect?: number;
 };
 
 // Used when a piece has no recorded aspect yet.
 const FALLBACK_ASPECT = 0.8;
 
-// Everything Logan makes is charcoal on paper, so this is a default rather
-// than a per-piece field. Move it into the manifest if that ever changes.
-const MEDIUM = "Charcoal on paper";
+// Fallback for pieces with no medium recorded; per-piece values from the
+// manifest take precedence.
+const DEFAULT_MEDIUM = "Charcoal on paper";
 
 export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
@@ -116,8 +118,13 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
                 </div>
 
                 <p className="font-secondary mt-1.5 text-[0.7rem] leading-snug text-graphite">
-                  {MEDIUM}
+                  {piece.medium || DEFAULT_MEDIUM}
                 </p>
+                {piece.dimensions && (
+                  <p className="font-secondary mt-0.5 text-[0.66rem] leading-snug text-graphite/80">
+                    {piece.dimensions}
+                  </p>
+                )}
               </div>
             </li>
           ))}

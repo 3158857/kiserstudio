@@ -7,7 +7,12 @@ export type ManifestItem = {
   /** Stable key: `repo:<filename>` or `blob:<pathname>`. */
   id: string;
   url: string;
+  /** The piece's title. */
   caption: string;
+  /** Falls back to a site-wide default when empty. */
+  medium?: string;
+  /** e.g. '9 x 12 in., Unframed'. Omitted from the card when empty. */
+  dimensions?: string;
   visible: boolean;
   /** width / height. Absent on items published before masonry existed. */
   aspect?: number;
@@ -27,7 +32,8 @@ function normalise(raw: unknown): ManifestItem[] {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((entry) => {
     if (typeof entry !== "object" || entry === null) return [];
-    const { id, url, caption, visible, aspect } = entry as Record<string, unknown>;
+    const { id, url, caption, medium, dimensions, visible, aspect } =
+      entry as Record<string, unknown>;
     if (typeof id !== "string" || typeof url !== "string") return [];
     return [
       {
@@ -35,6 +41,8 @@ function normalise(raw: unknown): ManifestItem[] {
         url,
         caption: typeof caption === "string" ? caption : "",
         visible: Boolean(visible),
+        ...(typeof medium === "string" && medium ? { medium } : {}),
+        ...(typeof dimensions === "string" && dimensions ? { dimensions } : {}),
         ...(typeof aspect === "number" && aspect > 0 ? { aspect } : {}),
       },
     ];

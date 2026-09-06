@@ -16,6 +16,9 @@ const MAX_UPLOAD_BYTES = 60 * 1024 * 1024;
 const MAX_EDGE = 1600;
 const JPEG_QUALITY = 0.85;
 
+const FIELD =
+  "font-secondary w-full border border-rule-dark bg-transparent px-3 py-2 text-sm outline-none focus:border-chalk/60";
+
 /**
  * Downscales in the browser so full-resolution originals are never published.
  * createImageBitmap with imageOrientation:'from-image' applies EXIF rotation —
@@ -99,13 +102,17 @@ export function GalleryAdmin({
     setError(null);
     setStatus(null);
     startSaving(async () => {
-      const payload = rows.map(({ id, url, caption, visible, aspect }) => ({
-        id,
-        url,
-        caption,
-        visible,
-        aspect,
-      }));
+      const payload = rows.map(
+        ({ id, url, caption, medium, dimensions, visible, aspect }) => ({
+          id,
+          url,
+          caption,
+          medium,
+          dimensions,
+          visible,
+          aspect,
+        }),
+      );
       const result = await saveGallery(payload);
       if (result.ok) {
         setStatus("Published");
@@ -247,15 +254,38 @@ export function GalleryAdmin({
               </div>
 
               <label className="mt-3 block">
-                <span className="sr-only">Caption</span>
+                <span className="sr-only">Title</span>
                 <input
                   type="text"
                   value={row.caption}
                   onChange={(e) => update(row.id, { caption: e.target.value })}
-                  placeholder="Caption"
-                  className="font-secondary w-full border border-rule-dark bg-transparent px-3 py-2 text-sm outline-none focus:border-chalk/60"
+                  placeholder="Title"
+                  className={FIELD}
                 />
               </label>
+
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <label className="block">
+                  <span className="sr-only">Medium</span>
+                  <input
+                    type="text"
+                    value={row.medium ?? ""}
+                    onChange={(e) => update(row.id, { medium: e.target.value })}
+                    placeholder="Medium — defaults to charcoal on paper"
+                    className={FIELD}
+                  />
+                </label>
+                <label className="block">
+                  <span className="sr-only">Dimensions</span>
+                  <input
+                    type="text"
+                    value={row.dimensions ?? ""}
+                    onChange={(e) => update(row.id, { dimensions: e.target.value })}
+                    placeholder={'Size — e.g. 9 x 12 in., Unframed'}
+                    className={FIELD}
+                  />
+                </label>
+              </div>
 
               <label className="font-secondary mt-3 inline-flex cursor-pointer items-center gap-2 text-xs">
                 <input

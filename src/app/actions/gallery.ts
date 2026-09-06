@@ -19,6 +19,8 @@ export async function saveGallery(items: ManifestItem[]): Promise<SaveResult> {
     url: String(i.url).slice(0, 2000),
     caption: String(i.caption ?? "").slice(0, 200),
     visible: Boolean(i.visible),
+    ...(i.medium ? { medium: String(i.medium).slice(0, 160) } : {}),
+    ...(i.dimensions ? { dimensions: String(i.dimensions).slice(0, 120) } : {}),
     ...(typeof i.aspect === "number" && i.aspect > 0
       ? { aspect: Number(i.aspect.toFixed(4)) }
       : {}),
