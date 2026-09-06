@@ -7,7 +7,46 @@ import { upload } from "@vercel/blob/client";
 import { saveGallery } from "@/app/actions/gallery";
 import type { GalleryItem } from "@/lib/gallery";
 
-const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+// Generous, because the file is downscaled before it leaves the browser —
+// this only rejects absurd inputs.
+const MAX_UPLOAD_BYTES = 60 * 1024 * 1024;
+
+// Long-edge cap. Above ~1536 device px nothing on the site can show more
+// detail, so anything larger is only useful to someone downloading it.
+const MAX_EDGE = 1600;
+const JPEG_QUALITY = 0.85;
+
+/**
+ * Downscales in the browser so full-resolution originals are never published.
+ * createImageBitmap with imageOrientation:'from-image' applies EXIF rotation —
+ * without it, portrait phone photos upload sideways.
+ */
+async function downscale(file: File): Promise<{ blob: Blob; name: string }> {
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+  const w = Math.round(bitmap.width * scale);
+  const h = Math.round(bitmap.height * scale);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Could not process image.");
+  // Photographs of drawings are opaque; a white bed keeps any transparent
+  // source from turning black when re-encoded as JPEG.
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(bitmap, 0, 0, w, h);
+  bitmap.close();
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY),
+  );
+  if (!blob) throw new Error("Could not process image.");
+
+  const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+  return { blob, name };
+}
 
 export function GalleryAdmin({
   items,
@@ -89,9 +128,10 @@ export function GalleryAdmin({
       }
       setUploading(file.name);
       try {
+        const { blob, name } = await downscale(file);
         // Client upload: the file goes browser -> Blob directly, so Vercel's
         // 4.5 MB function body limit doesn't apply and there's no transfer cost.
-        await upload(`artwork/${file.name}`, file, {
+        await upload(`artwork/${name}`, blob, {
           access: "public",
           handleUploadUrl: "/api/upload",
         });
@@ -157,7 +197,11 @@ export function GalleryAdmin({
             {error}
           </span>
         )}
-        {!blobReady && (
+        {blobReady ? (
+          <span className="font-secondary text-xs opacity-50">
+            Images are resized to {MAX_EDGE}px on upload
+          </span>
+        ) : (
           <span className="font-secondary text-xs opacity-60">
             Uploads need the Blob store — changes save locally for now.
           </span>
