@@ -1,3 +1,4 @@
+import { EmailLink } from "./EmailLink";
 import { Socials } from "./Socials";
 
 export function About() {
@@ -30,14 +31,12 @@ export function About() {
           </p>
         </div>
 
-        <a
-          href="mailto:logankiser08@gmail.com"
-          className="font-secondary mt-8 inline-block border-b border-chalk/30 pb-1 text-[0.95rem] transition-colors hover:border-accent"
-        >
-          logankiser08@gmail.com
-        </a>
-
-        <Socials className="mt-10" />
+        {/* Instagram first: the email's revealed address is absolutely
+            positioned, so it needs clear space to its right. */}
+        <div className="mt-8 flex items-center gap-7">
+          <Socials />
+          <EmailLink />
+        </div>
       </div>
     </section>
   );
