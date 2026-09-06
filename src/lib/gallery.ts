@@ -1,52 +1,69 @@
 import fs from "node:fs";
 import path from "node:path";
-import manifest from "@/data/gallery.json";
+import { listUploads, readManifest, type ManifestItem } from "@/lib/store";
 
-export type GalleryItem = {
-  file: string;
-  caption: string;
-  visible: boolean;
-  /** False when the file is on disk but not yet in the committed manifest. */
+export type GalleryItem = ManifestItem & {
+  /** False when the image exists but the manifest hasn't seen it yet. */
   inManifest: boolean;
+  source: "repo" | "upload";
 };
 
 const ARTWORK_DIR = path.join(process.cwd(), "public", "artwork");
 const IMAGE = /\.(jpe?g|png|webp|avif)$/i;
 
-function filesOnDisk(): string[] {
+function repoFiles(): { id: string; url: string }[] {
   try {
-    return fs.readdirSync(ARTWORK_DIR).filter((f) => IMAGE.test(f)).sort();
+    return fs
+      .readdirSync(ARTWORK_DIR)
+      .filter((f) => IMAGE.test(f))
+      .sort()
+      .map((f) => ({ id: `repo:${f}`, url: `/artwork/${f}` }));
   } catch {
     return [];
   }
 }
 
 /**
- * Merges the committed manifest with whatever is actually in public/artwork.
- * Manifest order wins; files dropped in since the last commit are appended
- * and default to hidden, so nothing reaches the public gallery uncurated.
- * Manifest entries whose file has been deleted are dropped.
+ * Everything available to curate: the manifest's order and edits, plus any
+ * image that exists but isn't in it yet — repo files or fresh uploads —
+ * appended and hidden, so nothing goes public uncurated.
  */
-export function getGallery(): GalleryItem[] {
-  const files = filesOnDisk();
-  const known = new Set(manifest.items.map((i) => i.file));
+export async function getGalleryForAdmin(): Promise<GalleryItem[]> {
+  const [manifest, uploads] = await Promise.all([readManifest(), listUploads()]);
 
-  const ordered = manifest.items
-    .filter((i) => files.includes(i.file))
-    .map((i) => ({
-      file: i.file,
-      caption: i.caption ?? "",
-      visible: Boolean(i.visible),
+  const available = new Map<string, { url: string; source: "repo" | "upload" }>();
+  for (const f of repoFiles()) available.set(f.id, { url: f.url, source: "repo" });
+  for (const u of uploads) {
+    available.set(`blob:${u.pathname}`, { url: u.url, source: "upload" });
+  }
+
+  const known = new Set(manifest.map((m) => m.id));
+
+  const ordered: GalleryItem[] = manifest
+    .filter((m) => available.has(m.id))
+    .map((m) => ({
+      ...m,
+      // Trust the live URL over the stored one: blob URLs can change.
+      url: available.get(m.id)!.url,
+      source: available.get(m.id)!.source,
       inManifest: true,
     }));
 
-  const newcomers = files
-    .filter((f) => !known.has(f))
-    .map((f) => ({ file: f, caption: "", visible: false, inManifest: false }));
+  const newcomers: GalleryItem[] = [...available.entries()]
+    .filter(([id]) => !known.has(id))
+    .map(([id, meta]) => ({
+      id,
+      url: meta.url,
+      caption: "",
+      visible: false,
+      source: meta.source,
+      inManifest: false,
+    }));
 
   return [...ordered, ...newcomers];
 }
 
-export function getVisibleGallery(): GalleryItem[] {
-  return getGallery().filter((i) => i.visible);
+/** What the public gallery renders. One manifest read, no listing. */
+export async function getVisibleGallery(): Promise<ManifestItem[]> {
+  return (await readManifest()).filter((i) => i.visible);
 }

@@ -4,8 +4,11 @@ import { FeaturedWork } from "@/components/FeaturedWork";
 import { getVisibleGallery } from "@/lib/gallery";
 import { About } from "@/components/About";
 
-export default function Home() {
-  const gallery = getVisibleGallery();
+// Rebuilt on demand when the admin publishes; this is the safety net.
+export const revalidate = 300;
+
+export default async function Home() {
+  const gallery = await getVisibleGallery();
 
   return (
     <>

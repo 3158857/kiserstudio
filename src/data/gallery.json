@@ -1,8 +1,8 @@
 {
   "items": [
-    { "file": "fox.jpg", "caption": "Wildlife", "visible": true },
-    { "file": "spartan.jpg", "caption": "Figures", "visible": true },
-    { "file": "stingray.jpg", "caption": "Studies", "visible": true },
-    { "file": "cat.jpg", "caption": "", "visible": false }
+    { "id": "repo:fox.jpg", "url": "/artwork/fox.jpg", "caption": "Wildlife", "visible": true },
+    { "id": "repo:spartan.jpg", "url": "/artwork/spartan.jpg", "caption": "Figures", "visible": true },
+    { "id": "repo:stingray.jpg", "url": "/artwork/stingray.jpg", "caption": "Studies", "visible": true },
+    { "id": "repo:cat.jpg", "url": "/artwork/cat.jpg", "caption": "", "visible": false }
   ]
 }

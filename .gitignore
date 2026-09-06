@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Claude Code local preview config
 .claude/launch.json
+
+# local gallery store used before Vercel Blob is configured
+.gallery-store.json

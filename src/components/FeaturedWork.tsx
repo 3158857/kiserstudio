@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type GalleryPiece = { file: string; caption: string };
+export type GalleryPiece = { id: string; url: string; caption: string };
 
 export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
@@ -73,12 +73,12 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
         >
           {items.map((piece) => (
             <li
-              key={piece.file}
+              key={piece.id}
               className="w-[54%] shrink-0 snap-start sm:w-[37%] lg:w-[25%]"
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-graphite/20">
                 <Image
-                  src={`/artwork/${piece.file}`}
+                  src={piece.url}
                   alt={piece.caption || "Charcoal drawing by Logan Kiser"}
                   fill
                   sizes="(max-width: 640px) 54vw, (max-width: 1024px) 37vw, 25vw"
