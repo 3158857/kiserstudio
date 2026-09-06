@@ -99,20 +99,25 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
                   className="object-cover"
                 />
               </div>
-              <div className="mt-4 flex items-start justify-between gap-4">
-                <div className="min-w-0">
+              <div className="mt-4">
+                {/* Red as punctuation, not type: accent on the paper panel is
+                    only 3.24:1, too weak for text but fine as a rule. */}
+                <span className="block h-[2px] w-3 bg-accent" aria-hidden="true" />
+
+                <div className="mt-2.5 flex items-start justify-between gap-4">
                   {piece.caption && (
-                    <h3 className="tracked text-[0.72rem] font-semibold uppercase leading-snug">
+                    <h3 className="tracked min-w-0 text-[0.72rem] font-semibold uppercase leading-snug">
                       {piece.caption}
                     </h3>
                   )}
-                  <p className="font-secondary mt-1.5 text-[0.7rem] leading-snug opacity-55">
-                    {MEDIUM}
-                  </p>
+                  <span className="tracked shrink-0 pt-px text-[0.62rem] tabular-nums text-graphite">
+                    {String(i + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+                  </span>
                 </div>
-                <span className="tracked shrink-0 pt-0.5 text-[0.58rem] tabular-nums opacity-35">
-                  {String(i + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
-                </span>
+
+                <p className="font-secondary mt-1.5 text-[0.7rem] leading-snug text-graphite">
+                  {MEDIUM}
+                </p>
               </div>
             </li>
           ))}
