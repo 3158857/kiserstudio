@@ -53,9 +53,6 @@ body {
 .tracked {
   letter-spacing: 0.24em;
 }
-.tracked-wide {
-  letter-spacing: 0.4em;
-}
 
 /* Logan's signature ships as an alpha mask, so it can be tinted to any
    colour and sit on either the charcoal or the paper panels. */

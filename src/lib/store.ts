@@ -103,10 +103,6 @@ export async function readManifestDetailed(): Promise<ManifestRead> {
   }
 }
 
-export async function readManifest(): Promise<ManifestItem[]> {
-  return (await readManifestDetailed()).items;
-}
-
 export async function writeManifest(items: ManifestItem[]): Promise<void> {
   const body = JSON.stringify({ items }, null, 2) + "\n";
 
