@@ -15,7 +15,7 @@ export function About() {
               band holding his hand, the charcoal and his face. */}
           <Image
             src="/brand/bio.jpg"
-            alt="Logan Kiser shading a large charcoal drawing of an armoured soldier"
+            alt="Logan Kiser shading a large charcoal drawing of an armored soldier"
             fill
             sizes="(max-width: 1024px) 100vw, 42vw"
             className="object-cover"
