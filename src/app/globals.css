@@ -7,6 +7,9 @@
   --paper: #d6d1cb;
   --chalk: #f4f4f2; /* board prints #F4F422 (yellow); confirmed a typo — white is correct */
   --accent: #c7432e;
+  /* Sampled from the backdrop of the hero artwork itself, so the panel
+     beside the photo reads as the same field rather than a black slab. */
+  --hero-ground: #2d2719;
 
   --rule-dark: rgba(244, 244, 242, 0.16);
   --rule-light: rgba(17, 17, 17, 0.18);
@@ -18,6 +21,7 @@
   --color-paper: var(--paper);
   --color-chalk: var(--chalk);
   --color-accent: var(--accent);
+  --color-hero-ground: var(--hero-ground);
   --color-rule-dark: var(--rule-dark);
   --color-rule-light: var(--rule-light);
 

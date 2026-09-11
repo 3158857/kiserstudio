@@ -19,6 +19,31 @@ const FALLBACK_ASPECT = 0.8;
 // manifest take precedence.
 const DEFAULT_MEDIUM = "Charcoal on paper";
 
+// Filled charcoal discs: on the white panel an outline-only control at this
+// size was almost invisible, which is what prompted the change.
+const ARROW_CLASS =
+  "flex h-11 w-11 items-center justify-center rounded-full bg-charcoal text-white transition-colors " +
+  "hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " +
+  "focus-visible:outline-charcoal disabled:cursor-not-allowed disabled:bg-charcoal/15 " +
+  "disabled:text-charcoal/40 disabled:hover:bg-charcoal/15";
+
+function Chevron({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.25}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={direction === "left" ? "M15 5 8 12l7 7" : "M9 5l7 7-7 7"} />
+    </svg>
+  );
+}
+
 export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [atStart, setAtStart] = useState(true);
@@ -48,7 +73,7 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
   };
 
   return (
-    <section id="work" className="grain relative bg-paper py-14 text-charcoal lg:py-16">
+    <section id="work" className="grain relative bg-white py-14 text-charcoal lg:py-16">
       <div className="relative z-10">
         <div className="flex items-center justify-between gap-6 px-6 sm:px-10 lg:px-14">
           <div className="flex items-center gap-4">
@@ -56,24 +81,24 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
             <span className="h-[3px] w-10 bg-accent" aria-hidden="true" />
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => scrollBy(-1)}
               disabled={atStart}
               aria-label="Previous artwork"
-              className="text-xl transition-opacity disabled:cursor-not-allowed disabled:opacity-25"
+              className={ARROW_CLASS}
             >
-              &#8592;
+              <Chevron direction="left" />
             </button>
             <button
               type="button"
               onClick={() => scrollBy(1)}
               disabled={atEnd}
               aria-label="Next artwork"
-              className="text-xl transition-opacity disabled:cursor-not-allowed disabled:opacity-25"
+              className={ARROW_CLASS}
             >
-              &#8594;
+              <Chevron direction="right" />
             </button>
           </div>
         </div>
@@ -85,7 +110,7 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
           aria-label="Artwork gallery"
           className="mt-8 flex snap-x snap-proximity gap-6 overflow-x-auto scroll-smooth pb-2 pl-6 scroll-pl-6 sm:pl-10 sm:scroll-pl-10 lg:pl-14 lg:scroll-pl-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {items.map((piece, i) => (
+          {items.map((piece) => (
             <li key={piece.id} className="shrink-0 snap-start">
               {/* Fixed height, width derived from the artwork's own aspect —
                   so portraits and landscapes both show uncropped. */}
@@ -102,20 +127,16 @@ export function FeaturedWork({ items }: { items: GalleryPiece[] }) {
                 />
               </div>
               <div className="mt-4">
-                {/* Red as punctuation, not type: accent on the paper panel is
-                    only 3.24:1, too weak for text but fine as a rule. */}
+                {/* Red as punctuation, not type. It clears AA on white
+                    (4.92:1) but stays a rule here for consistency with the
+                    charcoal panels, where it doesn't. */}
                 <span className="block h-[2px] w-3 bg-accent" aria-hidden="true" />
 
-                <div className="mt-2.5 flex items-start justify-between gap-4">
-                  {piece.caption && (
-                    <h3 className="tracked min-w-0 text-[0.72rem] font-semibold uppercase leading-snug">
-                      {piece.caption}
-                    </h3>
-                  )}
-                  <span className="tracked shrink-0 pt-px text-[0.62rem] tabular-nums text-graphite">
-                    {String(i + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
-                  </span>
-                </div>
+                {piece.caption && (
+                  <h3 className="tracked mt-2.5 text-[0.72rem] font-semibold uppercase leading-snug">
+                    {piece.caption}
+                  </h3>
+                )}
 
                 <p className="font-secondary mt-1.5 text-[0.7rem] leading-snug text-graphite">
                   {piece.medium || DEFAULT_MEDIUM}
